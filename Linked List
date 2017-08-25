@@ -1,0 +1,197 @@
+链表
+#include <iostream>
+#include <stdio.h>
+#include <malloc.h>
+#include <stdlib.h>
+using namespace std;
+typedef struct Node
+{
+    int data;//数据域
+    struct Node * pNext;//指针域
+} NODE ,*PNODE;//NODE等价于struct Node,*PNODE等价于struct Node*
+PNODE create_list(void);
+void traverse_list(PNODE pHead);
+bool is_empty(PNODE pHead);
+int length_list(PNODE pHead);
+bool insert_list(PNODE pHead,int pos,int val);//在pHead所指向的链表的第pos个结点的前面插入一个新的节点,值为val,pos从1 开始
+bool delete_list(PNODE pHead,int pos,int * pval);
+void sort_list(PNODE pHead);
+
+int main()
+{
+    PNODE pHead=NULL;//等价于struct Node* pHead=NULL
+    int val;
+    pHead= create_list();//create_list()功能:创建一个非循环单链表,并将该链表的头结点的地址赋给pHead
+    traverse_list(pHead);
+    int len=length_list(pHead);
+    printf("list 's length is %d  \n",len);
+    sort_list(pHead);
+    traverse_list(pHead);
+    insert_list(pHead,1,3);
+    traverse_list(pHead);
+    if(delete_list(pHead,0,&val))
+    {
+        printf("you have deleted %d\n",val);
+    }
+    else
+    {
+        printf("delete failed!\n");
+    }
+    traverse_list(pHead);
+    sort_list(pHead);
+    traverse_list(pHead);
+    /*if(is_empty(pHead))
+    {
+        printf("list is empty!\n");
+
+    }
+    else
+    {
+        printf("list isn't empty!\n");
+    }*/
+
+    return 0;
+}
+PNODE create_list(void)
+{
+    int len;//用来存储有效结点个数
+    int i;
+    int val;//用来临时存放用户输入的结点的值
+    //生成一个不存放有效数据的头结点
+    PNODE pHead=(PNODE)malloc(sizeof(NODE));
+    if(NULL==pHead)
+    {
+        printf("malloc failed!\n");
+        exit(-1);
+    }
+    PNODE pTail=pHead;//创建一个尾结点
+    pTail->pNext=NULL;
+
+    printf("please input length that you need:");
+    scanf("%d",&len);
+
+    for(i=0;i<len;i++)
+    {
+        printf("please input NO.%d 's value:",i+1);
+        scanf("%d",&val);
+
+        PNODE pNew=(PNODE)malloc(sizeof(NODE));
+        if(NULL==pNew)
+        {
+            printf("malloc failed!\n");
+            exit(-1);
+        }
+       /* pNew->data=val;
+        pHead->pNext=pNew;
+        pNew->pNext=NULL;这样每生成一个新的结点都会挂到头结点后,原来的结点就丢失了
+        */
+        pNew->data=val;
+        pTail->pNext=pNew;
+        pNew->pNext=NULL;
+        pTail=pNew;
+
+
+    }
+    return pHead;
+}
+void traverse_list(PNODE pHead)
+{
+    PNODE p=pHead->pNext;
+    while (NULL!=p)
+    {
+        printf("%d  ",p->data);
+        p=p->pNext;
+    }
+    printf("\n");
+
+    return;
+}
+bool is_empty(PNODE pHead)
+{
+    if(NULL==pHead->pNext)
+        return true;
+    else
+        return false;
+}
+int length_list(PNODE pHead)
+{
+    PNODE p=pHead->pNext;
+    int len=0;//要给len初值
+    while(NULL!=p)
+    {
+        ++len;
+        p=p->pNext;
+    }
+    return len;
+}
+void sort_list(PNODE pHead)
+{
+    int i,j,t;
+    int len=length_list(pHead);
+    PNODE p,q;
+    for(i=0,p=pHead->pNext;i<len-1;i++,p=p->pNext)
+    {
+        for(j=i+1,q=p->pNext;j<len;j++,q=q->pNext)
+        {
+            if(p->data>q->data)//类似于a[i]>a[j]
+            {
+                t=p->data;//类似于t=a[i];
+                p->data=q->data;//类似于a[i]=a[j]
+                q->data=t;//a[j]=t
+            }
+        }
+    }
+    return;
+}
+//在pHead所指向的链表的第pos个结点的前面插入一个新的节点,值为val,pos从1 开始
+bool insert_list(PNODE pHead,int pos,int val)
+{
+    int i=0;
+    PNODE p=pHead;
+    while(NULL!=p&&i<pos-1)
+    {
+        p=p->pNext;
+        ++i;
+    }
+    if(i>pos-1||NULL==p)
+    {
+        return false;
+    }
+    PNODE pNew=(PNODE)malloc(sizeof(NODE));
+    if(NULL==pNew)
+    {
+        printf("malloc failed!\n");
+        exit(-1);
+    }
+    pNew->data=val;
+    PNODE q=p->pNext;
+    p->pNext=pNew;
+    pNew->pNext=q;
+
+    return true;
+
+}
+//删除pos所代表的结点
+bool delete_list(PNODE pHead,int pos,int * pval)
+{
+        int i=0;
+    PNODE p=pHead;
+    while(NULL!=p->pNext&&i<pos-1)
+    {
+        p=p->pNext;
+        ++i;
+    }
+    if(i>pos-1||NULL==p->pNext)
+    {
+        return false;
+    }
+    PNODE q=p->pNext;
+    *pval=q->data;
+    //删除p后面的结点
+    p->pNext=p->pNext->pNext;
+    free(q);
+    q=NULL;
+
+    return true;
+
+}
