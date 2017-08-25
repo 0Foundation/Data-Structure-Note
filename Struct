@@ -1,0 +1,97 @@
+结构体
+结构体的基本知识,类似于Java中的类但又不一样
+1.第一种方法,类似于java
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+
+using namespace std;
+
+struct Student
+{
+    int sid;
+    char name[500];
+    int age;
+};//分号不能省略
+
+int main(void)
+{
+    struct Student st={1001,"wsx",21};
+    printf("%d  %s  %d\n",st.sid,st.name,st.age);
+    st.sid=99;
+    // st.name="wsx"//error
+    strcpy(st.name,"weishaoxuan");//为字符串赋值的函数
+    st.age=100;
+    printf("%d  %s  %d\n",st.sid,st.name,st.age);
+    return 0;
+}
+2.指针的方法
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+
+using namespace std;
+
+struct Student
+{
+    int sid;
+    char name[500];
+    int age;
+};//分号不能省略
+
+int main(void)
+{
+    struct Student st={1001,"wsx",21};
+    //st.sid=99;//第一种方法
+    struct Student * pst;
+    pst=&st;
+    pst->sid=99;//pst->sid等价于(*pst).sid,而(*pst).sid等价于st.sid,所以pst->sid等价于st.sid
+
+
+    return 0;
+}
+3.传结构体变量和传结构体指针变量的对比
+
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+
+using namespace std;
+
+struct Student
+{
+    int sid;
+    char name[500];
+    int age;
+};//分号不能省略
+void f(struct Student * pst);
+void g(struct Student st);
+void g2(struct Student * pst);
+int main(void)
+{
+    struct Student st;
+    f(&st);//把st的地址传给了pst
+    g2(&st);//将st直接传过去的话,因为struct Student这个结构体至少208个字节,所以传给g()过去的数据至少208个字节,太耗内存和时间了
+    //printf("%d  %s  %d\n",st.sid,st.name,st.age);
+    return 0;
+}
+//这种方法耗时间耗内存不推荐
+//传递过来208个字节至少
+void g(struct Student st)
+{
+    printf("%d  %s  %d\n",st.sid,st.name,st.age);
+}
+//只传递一个指针变量才4个字节
+void g2(struct Student * pst)
+{
+    printf("%d  %s  %d\n",pst->sid,pst->name,pst->age);
+}
+void f(struct Student * pst)
+{
+    (*pst).sid=99;
+    strcpy(pst->name,"lalala");
+    pst->age=22;
+
+}
+
+
