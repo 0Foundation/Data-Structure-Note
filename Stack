@@ -1,0 +1,138 @@
+栈程序
+#include <iostream>
+#include <stdio.h>
+#include <malloc.h>
+#include <stdlib.h>
+
+using namespace std;
+typedef struct Node
+{
+    int data;
+    struct Node * pNext;
+
+}NODE,*PNODE;
+typedef struct Stack
+{
+    PNODE pTop;//指向栈顶
+    PNODE pBottom;//z指向头结点
+}STACK ,*PSTACK ;//PSTACK等价于struct Stack*
+void initStack(PSTACK ps);
+void pushStack(PSTACK ps ,int val);
+void traverseStack(PSTACK ps);
+bool empt(PSTACK ps);
+bool popStack(PSTACK ps,int* pval);
+void clearStack(PSTACK ps);
+int main()
+{
+    STACK S;//等价于struct Stack,含有pTop,pBottom
+    int val;
+    initStack(&S);//造出一个空栈
+    pushStack(&S,1);//压栈
+    pushStack(&S,2);
+    pushStack(&S,3);
+    pushStack(&S,4);
+    pushStack(&S,5);
+    pushStack(&S,6);
+
+    if(popStack(&S,&val))
+    {
+        printf("popStack success!  popValue is %d\n",val);
+    }
+    else
+    {
+        printf("popStack failed!\n");
+    }
+    traverseStack(&S);//遍历输出
+    clearStack(&S);
+    traverseStack(&S);
+    if(popStack(&S,&val))
+    {
+        printf("popStack success!  popValue is %d\n",val);
+    }
+    else
+    {
+        printf("popStack failed!\n");
+    }
+    return 0;
+}
+void initStack(PSTACK ps)
+{
+    ps->pTop=(PNODE)malloc(sizeof(NODE));
+    if(NULL==ps->pTop)
+    {
+        printf("malloc failed!\n");
+        exit(-1);
+    }
+    else
+    {
+        ps->pBottom=ps->pTop;
+        ps->pBottom->pNext=NULL;//头结点
+    }
+}
+void pushStack(PSTACK ps,int val)
+{
+    PNODE pNew =(PNODE)malloc(sizeof(NODE));
+    pNew->data=val;
+    pNew->pNext=ps->pTop;//ps->pTop不能换成pBottom,因为每一个新压入的元素都要在原来链表pTop所指向的元素的上面
+    ps->pTop=pNew;
+}
+void traverseStack(PSTACK ps)
+{
+    PNODE p=ps->pTop;
+    while(p!=ps->pBottom)
+    {
+        printf("%d  ",p->data);
+        p=p->pNext;
+
+    }
+    printf("\n");
+    return;
+}
+bool empt(PSTACK ps)
+{
+    if(ps->pTop==ps->pBottom)
+        return true;
+    else
+        return false;
+}
+//把ps所指向的栈,出栈一次,并把出栈的元素存入pval所指向的变量中,如果出栈失败返回false,否则返回true
+bool popStack(PSTACK ps,int* pval)
+{
+    if(empt(ps))//ps本身存放的就是S的地址
+    {
+        return false;
+    }
+    else
+    {
+        PNODE pOld=ps->pTop;
+        *pval=pOld->data;
+        ps->pTop=ps->pTop->pNext;//ps->pTop=pOld->pNext;
+        free(pOld);
+        pOld=NULL;
+
+        return true;
+    }
+}
+//清空栈
+void clearStack(PSTACK ps)
+{
+     if(empt(ps))//ps本身存放的就是S的地址
+    {
+        return ;
+    }
+    else
+    {
+       PNODE p=ps->pTop;
+       PNODE q=NULL;
+       while(p!=ps->pBottom)
+       {
+           q=p->pNext;
+           free(p);
+           p=q;
+
+       }
+       ps->pTop=ps->pBottom;
+    }
+
+
+}
