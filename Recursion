@@ -124,5 +124,63 @@ int main()
     return 0;
 }
 
+汉诺塔
+ABC三个柱子
+123三个盘子
+1:A->C
+2:A->B
+1:C->B
+3:A->C
+1:B->A
+2:B->C
+1:A->C
+
+伪算法:
+if(n>1)
+{
+	先把a柱子上的前n-1个盘子从a借助c移到b
+	将a柱子上的第n个盘子直接移到c
+	再将b柱子上的n-1个盘子借助a移到c
+}
+程序:
+#include <iostream>
+#include <stdio.h>
+
+using namespace std;
+void Hanio(int n,char a,char b,char c)
+{
+   /* 如果是一个盘子
+        直接将a柱子上的盘子从a移到c上
+    否则
+        先将a柱子上的n-1个盘子借助c移到b
+        直接将a柱子上的盘子从a移到c
+        最后将b柱子上的n-1个盘子借助a移到c
+        */
+    if(1==n)
+    {
+        printf(" take No.%d plate from %c to %c\n ",n,a,c);
+    }
+    else
+    {
+        Hanio(n-1,a,c,b);
+        printf("take No.%d plate from %c to %c\n ",n,a,c);
+        Hanio(n-1,b,a,c);
+    }
+}
+int main(void)
+{
+    char ch1='A';
+    char ch2='B';
+    char ch3='C';
+    int n;
+    printf("please input plate's number:");
+    scanf("%d",&n);
+
+    Hanio(n,ch1,ch2,ch3);
+
+    return 0;
+}
+
+
 
 
