@@ -1,0 +1,104 @@
+递归
+1.不同函数之间调用
+#include <iostream>
+#include <stdio.h>
+
+using namespace std;
+void f();
+void g();
+void k();
+void f()
+{
+     printf("FFFF\n");
+     g();
+     printf("1111\n");
+}
+void g()
+{
+    printf("GGGG\n");
+    k();
+    printf("2222\n");
+}
+void k()
+{
+     printf("KKKK\n");
+
+}
+int main()
+{
+    f();
+
+    return 0;
+}
+2.自己调用自己
+#include <iostream>
+#include <stdio.h>
+
+using namespace std;
+
+void f(int n)
+{
+    if(n==1)
+    {
+        printf("haha!\n");
+    }
+    else
+    {
+        f(n-1);
+    }
+
+
+}
+int main()
+{
+    f(3);
+
+    return 0;
+}
+3.阶乘的实现
+#include <iostream>
+#include <stdio.h>
+using namespace std;
+//假定n的值是1或者大于1的值
+long f(long n)
+//n的阶乘要借助n-1的阶乘来解决,n-1要借助n-2,n-2要借助n-3....直到最后n=1时候返回1,因为n=2要借助n=1来解决,so n=2解决->n=3解决->......n的阶乘解决
+{
+    if(1==n)
+    {
+        return 1;
+    }
+    else
+    {
+        return f(n-1)*n;
+    }
+
+
+}
+int main()
+{
+
+    printf("%d\n",f(6));
+    return 0;
+}
+
+4.1+2+3+....+100的和
+#include <iostream>
+#include <stdio.h>
+
+using namespace std;
+
+long  sum(int n)
+{
+    if(1==n)
+        return 1;
+    else
+        return sum(n-1)+n;
+}
+int main()
+{
+    printf("%ld\n",sum(100));
+
+    return 0;
+}
+
+
