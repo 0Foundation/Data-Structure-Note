@@ -1,0 +1,91 @@
+动态内存分配
+1.malloc函数解释
+	sizeof(int):告诉的是计算机以什么为单位来取内存,即以4字节为单位来取内存
+	len:告诉的是计算机取多少个单位的内存
+	malloc:取出参数所表示的大小的内存,但只返回这段内存的第一个字节的地址
+	(int * ):不仅是强制转换,也告诉了计算机malloc所代表的这段内存是以几个字节来作为单位的,若没有(int *)则malloc返回的地址是无效的,为"干地址"
+#include <iostream>
+#include <stdio.h>
+
+using namespace std;
+
+int main()
+{
+    int a[5]={1,5,5,6,7};
+    int len;
+    printf("请输入您所需要的数组的长度:len=");
+    scanf("%d",&len);
+    int * pArr=(int *)malloc(sizeof(int)*len);
+
+    return 0;
+}
+2.pArr指向这段内存的第一个字节的地址,那么他被当数组来使用
+because ::pArr[1]-->*(pArr+1)
+
+#include <iostream>
+#include <stdio.h>
+#include <malloc.h>
+
+using namespace std;
+
+int main(void)
+{
+    int a[5]={1,5,5,6,7};
+    int len;
+    printf("Please input len=");
+    scanf("%d",&len);
+    int * pArr=(int *)malloc(sizeof(int)*len);//pArr就是这段内存中第一个以4字节为单位的内存的第一个字节的地址
+    *pArr=1;//pArr代表的就是这段内存的第一个字节的地址,*pArr=1就是为这第一段内存填充内容
+    pArr[1]=5;//pArr代表着一段内存的第一个字节的地址,pArr就相当于充当了数组名,pArr[1]=5就类似于a[1]=5
+            //另外根据公式pArr[1]-->*(pArr+1),即相当于pArr指针移向下一个以4字节为单位的内存的第一个字节的地址
+    printf("%d  %d \n",*pArr,pArr[1]);
+
+    free(pArr);
+
+    return 0;
+}
+3.函数执行完毕后,静态变量全都释放,而动态变量分配后如果不自行释放是一直存在的
+4.要想通过某个函数来修改某个变量的值,一定要把这个变量的地址作为参数传给该函数
+5.要想跨函数使用内存一定要动态分配内存
+6.Java中
+	A aa =new A();
+就相当于
+	A * pa=(A * )malloc(sizeof(A));
+所以当某个函数调用aa时,aa传过去的就是内存中的地址,即pa
+当给aa赋值=9时,就相当于*pa=9
+7.结构体和跨函数使用动态内存分配结合,要注意那些点
+#include <iostream>
+#include <stdio.h>
+#include <malloc.h>
+
+using namespace std;
+
+struct Student//是一种数据结构,类似于int这种,他的指针变量也是他的第一个字节的地址
+{
+    int sid;
+    int age;
+};
+struct Student * CreateStudent(void);
+void ShowStudent(struct Student * );//结构体的指针
+int main()
+{
+    struct Student * ps;//4个字节,
+   // struct Student st;//8个字节
+   ps=CreateStudent();
+   ShowStudent(ps);
+
+    return 0;
+}
+struct Student * CreateStudent(void)
+{
+    struct Student * pst;//声明的指针要是结构体的指针,不要擅自变化类型
+    pst=(struct Student *)malloc(sizeof(struct Student *));
+    pst->sid=99;
+    pst->age=88;
+    return pst;
+}
+void ShowStudent(struct Student * ps )//结构体的指针
+{
+    printf("%d  %d\n",ps->sid,ps->age);
+}
+
